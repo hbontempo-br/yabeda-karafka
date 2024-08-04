@@ -1,0 +1,12 @@
+---
+require:
+  - rubocop-rspec
+
+Metrics/BlockLength:
+  Enabled: false
+  Exclude:
+    - "Gemfile"
+    - "spec/**/*"
+
+Style/Documentation:
+  Enabled: false
