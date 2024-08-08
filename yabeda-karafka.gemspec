@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'lib/yabeda/karafka/version'
+lib = File.expand_path("lib", __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'yabeda/karafka/version'
 
 Gem::Specification.new do |s|
   s.name = 'yabeda-karafka'
@@ -19,12 +21,14 @@ Gem::Specification.new do |s|
   s.authors = ['Henrique Bontempo']
   s.email = 'me@hbontempo.dev'
 
+  s.require_paths = ['lib']
   s.files = Dir['lib/**/*.rb']
 
   s.add_dependency 'anyway_config', '>= 1.3', '< 3'
   s.add_dependency 'karafka', '~> 2.0'
-  s.add_dependency 'yabeda', '>= 0.6'
+  s.add_dependency 'yabeda', '>= 0.8'
 
   s.add_development_dependency 'bundler', '~> 2.0'
+  s.add_development_dependency "rake", "~> 13.0"
   s.add_development_dependency 'rspec', '~> 3.0'
 end
