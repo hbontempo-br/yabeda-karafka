@@ -1,3 +1,8 @@
+
+> ## :warning: WORK IN PROGRESS :warning:
+
+---
+
 # Yabeda::Karafka
 
 [Yabeda] plugin for [Karafka] events.
