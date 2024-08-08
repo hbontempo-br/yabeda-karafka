@@ -6,13 +6,6 @@ module Yabeda
   module Karafka
     class Producer
       class << self
-        def register
-          register_metrics
-          register_events
-        end
-
-        private
-
         def register_metrics
           Yabeda.configure do
             group :karafka_producer do
@@ -29,6 +22,8 @@ module Yabeda
             message_batch_sent(type)
           end
         end
+
+        private
 
         def register_event(event_name, &block)
           ::Karafka.producer.monitor.subscribe(event_name, &block)

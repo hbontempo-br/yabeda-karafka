@@ -4,12 +4,6 @@ module Yabeda
   module Karafka
     class Base
       class << self
-        def register
-          register_metrics
-        end
-
-        private
-
         def register_metrics
           Yabeda.configure do
             group :karafka do

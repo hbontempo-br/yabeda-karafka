@@ -16,8 +16,13 @@ module Yabeda
       @config ||= Config.new
     end
 
-    Base.register if config.consumer_metrics || config.producer_metrics
-    Consumer.register if config.consumer_metrics
-    Producer.register if config.producer_metrics
+    Base.register_metrics if config.consumer_metrics || config.producer_metrics
+    Consumer.register_metrics if config.consumer_metrics
+    Producer.register_metrics if config.producer_metrics
+
+    ::Karafka.monitor.subscribe('app.initialized') do |_event|
+      Consumer.register_events if config.consumer_metrics
+      Producer.register_events if config.producer_metrics
+    end
   end
 end

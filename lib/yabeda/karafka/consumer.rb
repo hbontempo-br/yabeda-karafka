@@ -15,13 +15,6 @@ module Yabeda
       ].freeze
 
       class << self
-        def register
-          register_metrics
-          register_events
-        end
-
-        private
-
         def register_metrics # rubocop:disable Metrics/MethodLength
           Yabeda.configure do
             group :karafka_consumer do
@@ -53,6 +46,8 @@ module Yabeda
           messages_consumed
           error
         end
+
+        private
 
         def register_event(event_name, &block)
           ::Karafka.monitor.subscribe(event_name, &block)
