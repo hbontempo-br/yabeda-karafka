@@ -30,13 +30,15 @@ module Yabeda
                         unit: :messages,
                         per: :batch,
                         tags: %i[topic partition consumer],
-                        buckets: MESSAGE_PER_BATCH_BUCKETS
+                        buckets: MESSAGE_PER_BATCH_BUCKETS,
+                        comment: 'Quantity of messages on a given batch'
 
               histogram :batch_processing_time,
                         unit: :milliseconds,
                         per: :batch,
                         tags: %i[topic partition consumer],
-                        buckets: LONG_RUNNING_JOB_RUNTIME_BUCKETS
+                        buckets: LONG_RUNNING_JOB_RUNTIME_BUCKETS,
+                        comment: 'Time that took to process a given batch'
             end
           end
         end
