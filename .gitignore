@@ -14,3 +14,6 @@ Gemfile.lock
 
 # Editor/IDEA
 /.idea
+
+# Builded gems
+*.gem
