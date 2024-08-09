@@ -5,13 +5,14 @@ require 'karafka'
 module Yabeda
   module Karafka
     class Consumer
-      LONG_RUNNING_JOB_RUNTIME_BUCKETS = [
-        0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, # standard (from Prometheus)
-        30, 60, 120, 300, 1800
+      BATCH_PROCESSING_TIME_BUCKETS = [
+        1, 3, 5, 10, 15, 25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275,
+        300, 350, 400, 450, 500, 550, 600, 650, 700, 800, 900, 1_000, 1_500, 2_000,
+        3_000, 4_000, 5_000, 6_000, 7_000, 8_000, 9_000, 10_000
       ].freeze
 
       MESSAGE_PER_BATCH_BUCKETS = [
-        1, 5, 10, 15, 30, 50, 75, 100, 200
+        1, 5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250, 300, 400, 500
       ].freeze
 
       class << self
@@ -37,8 +38,8 @@ module Yabeda
                         unit: :milliseconds,
                         per: :batch,
                         tags: %i[topic partition consumer],
-                        buckets: LONG_RUNNING_JOB_RUNTIME_BUCKETS,
-                        comment: 'Time that took to process a given batch'
+                        buckets: BATCH_PROCESSING_TIME_BUCKETS,
+                        comment: 'Time that took to process a given batch (ms)'
             end
           end
         end
@@ -58,7 +59,7 @@ module Yabeda
         def messages_received
           register_event('consumer.consume') do |event|
             consumer = event[:caller]
-            labels = { topic: consumer.topic, partition: consumer.partition, consumer: consumer.class.name }
+            labels = { topic: consumer.topic.name, partition: consumer.partition, consumer: consumer.class.name }
             message_count = consumer.messages.count
             Yabeda.karafka_consumer_received_message_total.increment(labels, by: message_count)
             Yabeda.karafka_consumer_messages_per_batch.measure(labels, message_count)
@@ -68,7 +69,7 @@ module Yabeda
         def messages_consumed
           register_event('consumer.consumed') do |event|
             consumer = event[:caller]
-            labels = { topic: consumer.topic, partition: consumer.partition, consumer: consumer.class.name }.compact
+            labels = { topic: consumer.topic.name, partition: consumer.partition, consumer: consumer.class.name }.compact
             message_count = consumer.messages.count
             time = event[:time]
             Yabeda.karafka_consumer_processed_message_total.increment(labels, by: message_count)

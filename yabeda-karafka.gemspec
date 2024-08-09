@@ -29,6 +29,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'yabeda', '~> 0.8'
 
   s.add_development_dependency 'bundler', '~> 2.0'
-  s.add_development_dependency "rake", "~> 13.0"
+  s.add_development_dependency 'rake', '~> 13.0'
   s.add_development_dependency 'rspec', '~> 3.0'
 end

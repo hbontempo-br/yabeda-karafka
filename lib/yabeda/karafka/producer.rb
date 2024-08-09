@@ -32,7 +32,7 @@ module Yabeda
         def message_sent(type)
           register_event("message.produced_#{type}") do |event|
             message = event[:message]
-            labels = { topic: message.topic, type: type }
+            labels = { topic: message.topic.name, type: type }
             Yabeda.karafka_producer_sent_message_total.increment(labels)
           end
         end
@@ -41,7 +41,7 @@ module Yabeda
           register_event("messages.produced_#{type}") do |event|
             messages = event[:messages]
             messages.each do |message|
-              labels = { topic: message.topic, type: type }
+              labels = { topic: message.topic.name, type: type }
               Yabeda.karafka_producer_sent_message_total.increment(labels)
             end
           end
