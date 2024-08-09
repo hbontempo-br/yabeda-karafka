@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'yabeda/karafka/version'
 
 Gem::Specification.new do |s|
-  s.name = 'yabeda-karafka'
+  s.name = 'yabeda-karafka2'
   s.version = Yabeda::Karafka::VERSION
   s.summary = 'Monitoring of Karafka operation'
   s.description = 'Extends Yabeda to collect Karafka metrics'
@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'anyway_config', '>= 1.3', '< 3'
   s.add_dependency 'karafka', '~> 2.0'
-  s.add_dependency 'yabeda', '>= 0.8'
+  s.add_dependency 'yabeda', '~> 0.8'
 
   s.add_development_dependency 'bundler', '~> 2.0'
   s.add_development_dependency "rake", "~> 13.0"
