@@ -5,8 +5,8 @@ require:
 Metrics/BlockLength:
   Enabled: false
   Exclude:
-    - "Gemfile"
-    - "spec/**/*"
+    - 'Gemfile'
+    - 'spec/**/*'
 
 Style/Documentation:
   Enabled: false

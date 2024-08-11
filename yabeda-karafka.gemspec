@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-lib = File.expand_path("lib", __dir__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'yabeda/karafka/version'
 
 Gem::Specification.new do |s|
-  s.name = 'yabeda-karafka2'
+  s.name = 'yabeda-karafka-2'
   s.version = Yabeda::Karafka::VERSION
   s.summary = 'Monitoring of Karafka operation'
   s.description = 'Extends Yabeda to collect Karafka metrics'
