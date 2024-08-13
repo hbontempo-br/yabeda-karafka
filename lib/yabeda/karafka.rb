@@ -19,14 +19,14 @@ module Yabeda
     Yabeda.configure do
       config = ::Yabeda::Karafka.config
 
+      # Register metrics
       Base.register_metrics if config.consumer_metrics || config.producer_metrics
       Consumer.register_metrics if config.consumer_metrics
       Producer.register_metrics if config.producer_metrics
 
-      ::Karafka.monitor.subscribe('app.initialized') do |_event|
-        Consumer.register_events if config.consumer_metrics
-        Producer.register_events if config.producer_metrics
-      end
+      # Map Karafka events to metric changes
+      Consumer.register_events if config.consumer_metrics
+      Producer.register_events if config.producer_metrics
     end
   end
 end
