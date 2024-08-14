@@ -15,8 +15,7 @@ module Yabeda
         def register_metrics
           Yabeda.configure do
             group :karafka_producer do
-              counter :sent_messages_total_count,
-                      unit: :messages,
+              counter :sent_messages_total,
                       tags: %i[topic type],
                       comment: 'Total number of kafka messages produced'
 
@@ -25,7 +24,7 @@ module Yabeda
                         per: :message,
                         tags: %i[topic type],
                         buckets: MESSAGE_TRANMISSION_TIME_BUCKETS,
-                        comment: 'Time that took to send a message (ms)'
+                        comment: 'Time that took to send a message'
             end
           end
         end
@@ -47,7 +46,7 @@ module Yabeda
           register_event("message.produced_#{type}") do |event|
             message = event[:message]
             labels = { topic: message[:topic], type: type }
-            Yabeda.karafka_producer_sent_messages_total_count.increment(labels)
+            Yabeda.karafka_producer_sent_messages_total.increment(labels)
             Yabeda.karafka_producer_message_send_time.measure(labels, event[:time])
           end
         end
@@ -57,8 +56,8 @@ module Yabeda
             messages = event[:messages]
             messages_count = messages.count
             messages.each do |message|
-              labels = { topic: message['topic'], type: type }
-              Yabeda.karafka_producer_sent_messages_total_count.increment(labels)
+              labels = { topic: message[:topic], type: type }
+              Yabeda.karafka_producer_sent_messages_total.increment(labels)
               Yabeda.karafka_producer_message_send_time.measure(labels, event[:time] / messages_count)
             end
           end
@@ -70,7 +69,7 @@ module Yabeda
             base_type = type.split('.').first
             error = event[:error].class.name
             labels = { type: type, base_type: base_type, error: error }.compact
-            Yabeda.karafka_errors_total_count.increment(labels)
+            Yabeda.karafka_errors_total.increment(labels)
           end
         end
       end

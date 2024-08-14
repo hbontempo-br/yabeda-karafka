@@ -31,13 +31,13 @@ RSpec.describe Yabeda::Karafka do
     end
 
     [
-      ['karafka_errors_total_count', :errors, Yabeda::Counter, %i[type base_type error]],
-      ['karafka_consumer_received_batches_total_count', :batches, Yabeda::Counter, %i[topic partition consumer]],
-      ['karafka_consumer_received_messages_total_count', :messages, Yabeda::Counter, %i[topic partition consumer]],
-      ['karafka_consumer_processed_batches_total_count', :batches, Yabeda::Counter, %i[topic partition consumer]],
-      ['karafka_consumer_processed_messages_total_count', :messages, Yabeda::Counter, %i[topic partition consumer]],
-      ['karafka_producer_sent_messages_total_count', :messages, Yabeda::Counter, %i[topic type]],
-      ['karafka_consumer_messages_per_batch', :messages, Yabeda::Histogram, %i[topic partition consumer]],
+      ['karafka_errors_total', nil, Yabeda::Counter, %i[type base_type error]],
+      ['karafka_consumer_received_batches_total', nil, Yabeda::Counter, %i[topic partition consumer]],
+      ['karafka_consumer_received_messages_total', nil, Yabeda::Counter, %i[topic partition consumer]],
+      ['karafka_consumer_processed_batches_total', nil, Yabeda::Counter, %i[topic partition consumer]],
+      ['karafka_consumer_processed_messages_total', nil, Yabeda::Counter, %i[topic partition consumer]],
+      ['karafka_producer_sent_messages_total', nil, Yabeda::Counter, %i[topic type]],
+      ['karafka_consumer_batch_size', nil, Yabeda::Histogram, %i[topic partition consumer]],
       ['karafka_consumer_batch_processing_time', :milliseconds, Yabeda::Histogram, %i[topic partition consumer]],
       ['karafka_consumer_message_processing_time', :milliseconds, Yabeda::Histogram, %i[topic partition consumer]],
       ['karafka_producer_message_send_time', :milliseconds, Yabeda::Histogram, %i[topic type]],

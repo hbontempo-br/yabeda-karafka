@@ -26,28 +26,23 @@ module Yabeda
         def register_metrics # rubocop:disable Metrics/MethodLength
           Yabeda.configure do
             group :karafka_consumer do
-              counter :received_batches_total_count,
-                      unit: :batches,
+              counter :received_batches_total,
                       tags: %i[topic partition consumer],
                       comment: 'Total number of batches received'
 
-              counter :received_messages_total_count,
-                      unit: :messages,
+              counter :received_messages_total,
                       tags: %i[topic partition consumer],
                       comment: 'Total number of messages received'
 
-              counter :processed_batches_total_count,
-                      unit: :batches,
+              counter :processed_batches_total,
                       tags: %i[topic partition consumer],
                       comment: 'Total number of batches processed'
 
-              counter :processed_messages_total_count,
-                      unit: :messages,
+              counter :processed_messages_total,
                       tags: %i[topic partition consumer],
                       comment: 'Total number of messages processed'
 
-              histogram :messages_per_batch,
-                        unit: :messages,
+              histogram :batch_size,
                         per: :batch,
                         tags: %i[topic partition consumer],
                         buckets: MESSAGE_PER_BATCH_BUCKETS,
@@ -58,14 +53,14 @@ module Yabeda
                         per: :batch,
                         tags: %i[topic partition consumer],
                         buckets: BATCH_PROCESSING_TIME_BUCKETS,
-                        comment: 'Time that took to process a given batch of messages (ms)'
+                        comment: 'Time that took to process a given batch of messages'
 
               histogram :message_processing_time,
                         unit: :milliseconds,
                         per: :batch,
                         tags: %i[topic partition consumer],
                         buckets: MESSAGE_PROCESSING_TIME_BUCKETS,
-                        comment: 'Time that took to process message (ms)'
+                        comment: 'Time that took to process message'
             end
           end
         end
@@ -87,9 +82,9 @@ module Yabeda
             consumer = event[:caller]
             labels = { topic: consumer.topic.name, partition: consumer.partition, consumer: consumer.class.name }
             message_count = consumer.messages.count
-            Yabeda.karafka_consumer_received_batches_total_count.increment(labels)
-            Yabeda.karafka_consumer_received_messages_total_count.increment(labels, by: message_count)
-            Yabeda.karafka_consumer_messages_per_batch.measure(labels, message_count)
+            Yabeda.karafka_consumer_received_batches_total.increment(labels)
+            Yabeda.karafka_consumer_received_messages_total.increment(labels, by: message_count)
+            Yabeda.karafka_consumer_batch_size.measure(labels, message_count)
           end
         end
 
@@ -98,8 +93,8 @@ module Yabeda
             consumer = event[:caller]
             messages_count = consumer.messages.count
             labels = { topic: consumer.topic.name, partition: consumer.partition, consumer: consumer.class.name }.compact
-            Yabeda.karafka_consumer_processed_batches_total_count.increment(labels)
-            Yabeda.karafka_consumer_processed_messages_total_count.increment(labels, by: messages_count)
+            Yabeda.karafka_consumer_processed_batches_total.increment(labels)
+            Yabeda.karafka_consumer_processed_messages_total.increment(labels, by: messages_count)
             Yabeda.karafka_consumer_batch_processing_time.measure(labels, event[:time])
             Yabeda.karafka_consumer_message_processing_time.measure(labels, event[:time]/messages_count)
           end
@@ -111,7 +106,7 @@ module Yabeda
             base_type = type.split('.').first
             error = event[:error].class.name
             labels = { type: type, base_type: base_type, error: error }.compact
-            Yabeda.karafka_errors_total_count.increment(labels)
+            Yabeda.karafka_errors_total.increment(labels)
           end
         end
       end

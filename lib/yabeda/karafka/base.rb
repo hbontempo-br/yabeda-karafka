@@ -7,8 +7,7 @@ module Yabeda
         def register_metrics
           Yabeda.configure do
             group :karafka do
-              counter :errors_total_count,
-                      unit: :errors,
+              counter :errors_total,
                       tags: %i[type base_type error],
                       comment: 'Total number of error'
             end
