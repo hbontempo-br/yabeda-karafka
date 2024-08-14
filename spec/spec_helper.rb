@@ -2,6 +2,9 @@
 
 require 'bundler/setup'
 require 'yabeda/karafka'
+
+
+require 'helpers/karafka_helper'
 require 'yabeda/rspec'
 
 require 'pry'
