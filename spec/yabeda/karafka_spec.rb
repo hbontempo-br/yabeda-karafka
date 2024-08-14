@@ -50,4 +50,45 @@ RSpec.describe Yabeda::Karafka do
       end
     end
   end
+
+  describe 'computes producer events' do
+    def produce_messages(type)
+      ::Karafka.producer.send(
+        "produce_many_#{type}",
+        [{ payload: 'what', topic: 'b' }, { payload: 'ever', topic: 'a' }]
+      )
+    end
+
+    %w[sync async].each do |type|
+      describe "when using :produce_many_#{type} method" do
+        it 'computes :karafka_producer_sent_messages_total' do
+          expect { produce_messages(type) }.to increment_yabeda_counter(:karafka_producer_sent_messages_total).by(2)
+        end
+        it 'computes :karafka_producer_message_send_time' do
+          expect { produce_messages(type) }.to measure_yabeda_histogram(:karafka_producer_message_send_time)
+        end
+      end
+    end
+
+    def produce_message(type)
+      ::Karafka.producer.send(
+        "produce_#{type}",
+        { payload: 'what', topic: 'b' }
+      )
+    end
+
+    %w[sync async].each do |type|
+      describe "when using :produce_#{type} method" do
+        it 'computes :karafka_producer_sent_messages_total' do
+          expect { produce_message(type) } .to increment_yabeda_counter(:karafka_producer_sent_messages_total).by(1)
+        end
+        it 'computes :karafka_producer_message_send_time' do
+          expect { produce_message(type) } .to measure_yabeda_histogram(:karafka_producer_message_send_time)
+        end
+      end
+    end
+  end
+
+  describe 'computes consumer events' do
+  end
 end
