@@ -11,7 +11,6 @@ module Yabeda
         3_000, 4_000, 5_000, 6_000, 7_000, 8_000, 9_000, 10_000
       ].freeze
 
-
       MESSAGE_PROCESSING_TIME_BUCKETS = [
         1, 2, 3, 4, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 30, 35, 40, 45,
         50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 225, 250, 275, 300, 400,
@@ -42,6 +41,10 @@ module Yabeda
                       tags: %i[topic partition consumer],
                       comment: 'Total number of messages processed'
 
+              counter :sent_messages_to_dead_letter_queue_total,
+                      tags: %i[topic partition consumer dlq_topic],
+                      comment: 'Total number of messages sent to dead_letter_queue'
+
               histogram :batch_size,
                         per: :batch,
                         tags: %i[topic partition consumer],
@@ -68,6 +71,7 @@ module Yabeda
         def register_events
           messages_received
           messages_consumed
+          dead_letter_queue_dispatched
           error
         end
 
@@ -96,8 +100,23 @@ module Yabeda
             Yabeda.karafka_consumer_processed_batches_total.increment(labels)
             Yabeda.karafka_consumer_processed_messages_total.increment(labels, by: messages_count)
             Yabeda.karafka_consumer_batch_processing_time.measure(labels, event[:time])
-            Yabeda.karafka_consumer_message_processing_time.measure(labels, event[:time]/messages_count)
+            Yabeda.karafka_consumer_message_processing_time.measure(labels, event[:time] / messages_count)
           end
+        end
+
+        def dead_letter_queue_dispatched
+          register_event('dead_letter_queue.dispatched') do |event|
+            consumer = event[:caller]
+            message = event[:message]
+            labels = {
+              topic: consumer.topic.name,
+              partition: message.partition,
+              consumer: consumer.class.name,
+              dlq_topic: consumer.topic.dead_letter_queue.topic
+            }
+            Yabeda.karafka_consumer_sent_messages_to_dead_letter_queue_total.increment(labels)
+          end
+
         end
 
         def error

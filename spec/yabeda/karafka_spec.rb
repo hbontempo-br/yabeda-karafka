@@ -26,7 +26,7 @@ RSpec.describe Yabeda::Karafka do
 
     describe 'registered metrics' do
       it 'has registered all metrics' do
-        expect(Yabeda.metrics.count).to eq 10
+        expect(Yabeda.metrics.count).to eq 11
       end
     end
 
@@ -36,6 +36,7 @@ RSpec.describe Yabeda::Karafka do
       ['karafka_consumer_received_messages_total', nil, Yabeda::Counter, %i[topic partition consumer]],
       ['karafka_consumer_processed_batches_total', nil, Yabeda::Counter, %i[topic partition consumer]],
       ['karafka_consumer_processed_messages_total', nil, Yabeda::Counter, %i[topic partition consumer]],
+      ['karafka_consumer_sent_messages_to_dead_letter_queue_total', nil, Yabeda::Counter, %i[topic partition consumer dlq_topic]],
       ['karafka_producer_sent_messages_total', nil, Yabeda::Counter, %i[topic type]],
       ['karafka_consumer_batch_size', nil, Yabeda::Histogram, %i[topic partition consumer]],
       ['karafka_consumer_batch_processing_time', :milliseconds, Yabeda::Histogram, %i[topic partition consumer]],
@@ -49,5 +50,46 @@ RSpec.describe Yabeda::Karafka do
         it_behaves_like 'has tags', metric, tags
       end
     end
+  end
+
+  describe 'computes producer events' do
+    def produce_messages(type)
+      ::Karafka.producer.send(
+        "produce_many_#{type}",
+        [{ payload: 'what', topic: 'b' }, { payload: 'ever', topic: 'a' }]
+      )
+    end
+
+    %w[sync async].each do |type|
+      describe "when using :produce_many_#{type} method" do
+        it 'computes :karafka_producer_sent_messages_total' do
+          expect { produce_messages(type) }.to increment_yabeda_counter(:karafka_producer_sent_messages_total).by(2)
+        end
+        it 'computes :karafka_producer_message_send_time' do
+          expect { produce_messages(type) }.to measure_yabeda_histogram(:karafka_producer_message_send_time)
+        end
+      end
+    end
+
+    def produce_message(type)
+      ::Karafka.producer.send(
+        "produce_#{type}",
+        { payload: 'what', topic: 'b' }
+      )
+    end
+
+    %w[sync async].each do |type|
+      describe "when using :produce_#{type} method" do
+        it 'computes :karafka_producer_sent_messages_total' do
+          expect { produce_message(type) } .to increment_yabeda_counter(:karafka_producer_sent_messages_total).by(1)
+        end
+        it 'computes :karafka_producer_message_send_time' do
+          expect { produce_message(type) } .to measure_yabeda_histogram(:karafka_producer_message_send_time)
+        end
+      end
+    end
+  end
+
+  describe 'computes consumer events' do
   end
 end
