@@ -38,6 +38,7 @@ Metrics from events generated during the consumption of kafka messages
 - Total number of messages received: `karafka_consumer_received_messages_total_count` (segmented by `topic`, `partition` and `consumer`)
 - Total number of batches processed: `karafka_consumer_processed_batches_total_count` (segmented by `topic`, `partition` and `consumer`)
 - Total number of messages processed: `karafka_consumer_processed_messages_total_count` (segmented by `topic`, `partition` and `consumer`)
+- Total number of messages sent to dead_letter_queue: `sent_messages_to_dead_letter_queue_total_count` (segmented by `topic`, `partition`, `consumer` and `dlq_topic`)
 - Quantity of messages received per batch of messages: `karafka_consumer_messages_per_batch` (segmented by `topic`, `partition` and `consumer`)
 - Time that took to process a batch of messages (ms): `karafka_consumer_batch_processing_time` (segmented by `topic`, `partition` and `consumer`)
 - Time that took to process message (ms): `karafka_consumer_message_processing_time` (segmented by `topic`, `partition` and `consumer`)
