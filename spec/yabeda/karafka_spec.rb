@@ -26,7 +26,7 @@ RSpec.describe Yabeda::Karafka do
 
     describe 'registered metrics' do
       it 'has registered all metrics' do
-        expect(Yabeda.metrics.count).to eq 10
+        expect(Yabeda.metrics.count).to eq 11
       end
     end
 
@@ -36,6 +36,7 @@ RSpec.describe Yabeda::Karafka do
       ['karafka_consumer_received_messages_total', nil, Yabeda::Counter, %i[topic partition consumer]],
       ['karafka_consumer_processed_batches_total', nil, Yabeda::Counter, %i[topic partition consumer]],
       ['karafka_consumer_processed_messages_total', nil, Yabeda::Counter, %i[topic partition consumer]],
+      ['karafka_consumer_sent_messages_to_dead_letter_queue_total', nil, Yabeda::Counter, %i[topic partition consumer dlq_topic]],
       ['karafka_producer_sent_messages_total', nil, Yabeda::Counter, %i[topic type]],
       ['karafka_consumer_batch_size', nil, Yabeda::Histogram, %i[topic partition consumer]],
       ['karafka_consumer_batch_processing_time', :milliseconds, Yabeda::Histogram, %i[topic partition consumer]],
